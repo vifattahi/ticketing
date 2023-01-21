@@ -5,6 +5,7 @@ import {loginUserRouter} from "./routes/login";
 import {logoutUserRouter} from "./routes/logout";
 import {registerUserRouter} from "./routes/register";
 import {errorHandlers} from "./middlewares/error-handlers";
+import {NotFoundError} from "./errors/notFoudError";
 
 const app = express();
 app.use(json());
@@ -13,7 +14,9 @@ app.use('/api/user', currentUserRouter);
 app.use('/api/user', loginUserRouter);
 app.use('/api/user', logoutUserRouter);
 app.use('/api/user', registerUserRouter);
-
+app.get('*', () => {
+    throw new NotFoundError();
+})
 app.use(errorHandlers);
 
 app.listen(3000, () => {
