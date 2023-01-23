@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors';
 import morgan from 'morgan';
 import { json } from 'body-parser';
+import * as mongoose from "mongoose";
 import {currentUserRouter} from "./routes/current-user";
 import {loginUserRouter} from "./routes/login";
 import {logoutUserRouter} from "./routes/logout";
@@ -11,7 +12,7 @@ import {NotFoundError} from "./errors/notFoudError";
 
 const app = express();
 app.use(json());
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+app.use(morgan('dev'));
 app.use('/api/user', currentUserRouter);
 app.use('/api/user', loginUserRouter);
 app.use('/api/user', logoutUserRouter);
@@ -21,7 +22,16 @@ app.all('*', async (req, res) => {
 })
 app.use(errorHandlers);
 
-app.listen(3000, () => {
-    console.info('Listening on port 3000...');
-})
+const start = async () => {
+    try {
+        await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
+        console.log('database was connected.')
+    }catch (e) {
+        console.log(e)
+    }
+    app.listen(3000, () => {
+        console.info('Listening on port 3000...');
+    })
+}
+start();
 
