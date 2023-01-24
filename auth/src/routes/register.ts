@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import {body, validationResult} from "express-validator";
 import {RequestValidationError} from "../errors/request-validation-error";
-import {DatabaseConnectionError} from "../errors/database-connection-error";
+
+import {User} from "../models/user";
+import {AlreadyExistsError} from "../errors/already-exists-error";
 
 const router = express();
 
@@ -20,7 +22,14 @@ router.post('/register',
         if (!errors.isEmpty()) {
             throw new RequestValidationError(errors.array());
         }
-        throw new DatabaseConnectionError();
+        const {email, password} = req.body;
+        const existUser = await User.findOne({ email });
+        if(existUser) {
+           throw new AlreadyExistsError();
+        }
+        const user = await User.build({ email, password });
+        await user.save();
+        res.status(201).send(user);
     });
 
 export { router as registerUserRouter }
