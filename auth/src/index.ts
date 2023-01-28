@@ -3,6 +3,7 @@ import 'express-async-errors';
 import morgan from 'morgan';
 import { json } from 'body-parser';
 import * as mongoose from "mongoose";
+import cookieSession from "cookie-session";
 import {currentUserRouter} from "./routes/current-user";
 import {loginUserRouter} from "./routes/login";
 import {logoutUserRouter} from "./routes/logout";
@@ -11,8 +12,13 @@ import {errorHandlers} from "./middlewares/error-handlers";
 import {NotFoundError} from "./errors/notFoudError";
 
 const app = express();
+app.set('trust proxy', true);
 app.use(json());
 app.use(morgan('dev'));
+app.use(cookieSession({
+    signed: false,
+    secure: true
+}));
 app.use('/api/user', currentUserRouter);
 app.use('/api/user', loginUserRouter);
 app.use('/api/user', logoutUserRouter);
