@@ -4,7 +4,6 @@ import {DatabaseConnectionError} from "../errors/database-connection-error";
 import {CustomError} from "../errors/custom-error";
 
 export const errorHandlers = (err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.log(err)
     if(err instanceof CustomError) {
         return res.status(err.statusCode).send({ errors: err.serializeErrors() });
     }
