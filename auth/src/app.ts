@@ -16,13 +16,13 @@ app.use(json());
 app.use(morgan('dev'));
 app.use(cookieSession({
     signed: false,
-    secure: true
+    secure: process.env.NODE_ENV !== 'test'
 }));
 app.use('/api/user', currentUserRouter);
 app.use('/api/user', loginUserRouter);
 app.use('/api/user', logoutUserRouter);
 app.use('/api/user', registerUserRouter);
-app.all('*', async (req, res) => {
+app.all('*', async () => {
     throw new NotFoundError();
 })
 app.use(errorHandlers);
