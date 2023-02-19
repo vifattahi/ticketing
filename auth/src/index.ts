@@ -8,6 +8,7 @@ const start = async () => {
     }
     try {
         await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
+        mongoose.set('strictQuery', false);
         console.log('database was connected.')
     }catch (e) {
         console.log(e)
